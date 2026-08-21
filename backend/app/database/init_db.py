@@ -4,6 +4,8 @@ from app.database.base import Base
 # Import all SQLAlchemy models to register them with Base.metadata
 import app.models  # noqa: F401
 from app.models.email_template import EmailTemplate
+from app.models.user import User
+from app.utils.security import hash_password
 
 logger = logging.getLogger("init_db")
 
@@ -34,7 +36,7 @@ INITIAL_TEMPLATE_BODY = """<div style="font-family: Arial, sans-serif; line-heig
 
 def init_db():
     """
-    Creates all database tables automatically and seeds initial email templates if empty.
+    Creates all database tables automatically and seeds initial email templates and HR admin user if empty.
     Safe to run on every startup (idempotent).
     """
     logger.info("Initializing database tables...")
@@ -42,6 +44,20 @@ def init_db():
 
     db = SessionLocal()
     try:
+        # Seed default HR Admin user if missing
+        admin_user = db.query(User).filter(User.email == "hr@company.com").first()
+        if not admin_user:
+            new_user = User(
+                name="HR Admin",
+                email="hr@company.com",
+                password_hash=hash_password("AdminPass123!"),
+                role="ADMIN",
+                is_active=True,
+            )
+            db.add(new_user)
+            db.commit()
+            logger.info("Seeded default HR Admin user hr@company.com")
+
         # Seed default initial email template if missing
         initial_tmpl = db.query(EmailTemplate).filter(EmailTemplate.template_key == "EXIT_FEEDBACK_INITIAL").first()
         if not initial_tmpl:
@@ -56,6 +72,6 @@ def init_db():
             db.commit()
             logger.info("Seeded default EXIT_FEEDBACK_INITIAL email template")
     except Exception as e:
-        logger.error(f"Error seeding email templates: {e}")
+        logger.error(f"Error seeding database defaults: {e}")
     finally:
         db.close()
