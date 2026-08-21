@@ -5,6 +5,8 @@ from sqlalchemy.orm import sessionmaker, Session
 from app.config import settings
 
 db_url = settings.DATABASE_URL
+if db_url.startswith("postgres://"):
+    db_url = db_url.replace("postgres://", "postgresql://", 1)
 
 # Configure engine args depending on database type
 engine_args = {}
