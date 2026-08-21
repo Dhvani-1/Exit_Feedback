@@ -1,0 +1,41 @@
+services:
+  # 1. Backend API + Embedded 24/7 Background Email Worker
+  - type: web
+    name: exit-feedback-backend
+    env: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: EMAIL_MODE
+        value: smtp
+      - key: EMAIL_FROM
+        value: onlyapp.testing@gmail.com
+      - key: EMAIL_FROM_NAME
+        value: HR Department
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        value: onlyapp.testing@gmail.com
+      - key: SMTP_PASSWORD
+        value: kekwrpmflgwmiufg
+      - key: ENABLE_EMBEDDED_WORKER
+        value: "true"
+
+  # 2. Frontend User Interface (Vite + React Static Site)
+  - type: web
+    name: exit-feedback-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: exit-feedback-backend
+          property: url
