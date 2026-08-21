@@ -23,7 +23,7 @@ services:
       - key: SMTP_USERNAME
         value: onlyapp.testing@gmail.com
       - key: SMTP_PASSWORD
-        sync: false
+        value: kekwrpmflgwmiufg
       - key: ENABLE_EMBEDDED_WORKER
         value: "true"
 
