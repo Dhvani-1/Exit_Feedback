@@ -40,7 +40,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: exit-feedback-backend
-          property: host
+        value: https://exit-feedback-backend.onrender.com/api
