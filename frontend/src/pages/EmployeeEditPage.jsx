@@ -94,12 +94,12 @@ const EmployeeEditPage = () => {
 
     try {
       await api.put(`/employees/${id}`, {
-        full_name: formData.full_name,
-        personal_email: formData.personal_email,
+        full_name: formData.full_name.trim(),
+        personal_email: formData.personal_email.trim(),
         last_working_date: formData.last_working_date,
-        designation: formData.designation,
+        designation: formData.designation ? formData.designation.trim() : null,
         start_date: formData.start_date || null,
-        tenure: formData.tenure,
+        tenure: formData.tenure ? formData.tenure.trim() : null,
         version: formData.version,
       });
       navigate(`/employees/${id}`);
