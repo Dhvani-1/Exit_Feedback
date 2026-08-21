@@ -102,12 +102,18 @@ def send_email(
         msg.add_alternative(html_body, subtype="html")
 
         # Connect with 10s timeout to prevent hanging the worker
-        with smtplib.SMTP(live_settings.SMTP_HOST, live_settings.SMTP_PORT, timeout=10) as server:
-            if live_settings.SMTP_USE_TLS:
-                server.starttls()
-            if live_settings.SMTP_USERNAME and live_settings.SMTP_PASSWORD:
-                server.login(live_settings.SMTP_USERNAME, live_settings.SMTP_PASSWORD)
-            server.send_message(msg)
+        if live_settings.SMTP_PORT == 465:
+            with smtplib.SMTP_SSL(live_settings.SMTP_HOST, live_settings.SMTP_PORT, timeout=10) as server:
+                if live_settings.SMTP_USERNAME and live_settings.SMTP_PASSWORD:
+                    server.login(live_settings.SMTP_USERNAME, live_settings.SMTP_PASSWORD)
+                server.send_message(msg)
+        else:
+            with smtplib.SMTP(live_settings.SMTP_HOST, live_settings.SMTP_PORT, timeout=10) as server:
+                if live_settings.SMTP_USE_TLS:
+                    server.starttls()
+                if live_settings.SMTP_USERNAME and live_settings.SMTP_PASSWORD:
+                    server.login(live_settings.SMTP_USERNAME, live_settings.SMTP_PASSWORD)
+                server.send_message(msg)
 
         return True, msg_id, None
 

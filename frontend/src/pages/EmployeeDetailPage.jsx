@@ -53,8 +53,17 @@ const EmployeeDetailPage = () => {
     try {
       setActionLoading(true);
       setActionMessage('');
-      await api.post(`/email/employees/${id}/send-now`);
-      setActionMessage('Initial feedback email sent successfully!');
+      const res = await api.post(`/email/employees/${id}/send-now`);
+      const updatedJob = res.data;
+      if (updatedJob?.status === 'SENT') {
+        setActionMessage('Initial feedback email sent successfully!');
+      } else if (updatedJob?.status === 'FAILED') {
+        setActionMessage(`Email dispatch failed: ${updatedJob.last_error || 'Permanent error'}`);
+      } else if (updatedJob?.status === 'SCHEDULED') {
+        setActionMessage(`Email dispatch attempted but failed. Rescheduled for retry due to: ${updatedJob.last_error || 'SMTP Connection Error'}`);
+      } else {
+        setActionMessage('Email dispatch action processed.');
+      }
       fetchEmployeeData();
     } catch (err) {
       alert(err.message || 'Failed to send email now');
