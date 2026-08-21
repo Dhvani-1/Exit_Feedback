@@ -37,13 +37,16 @@ def login(
 
     # Set HttpOnly cookie for secure auth without exposing token to JS localStorage
     max_age_seconds = settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    cookie_secure = True if settings.is_production else settings.COOKIE_SECURE
+    cookie_samesite = "none" if settings.is_production else settings.COOKIE_SAMESITE
+
     response.set_cookie(
         key=settings.COOKIE_NAME,
         value=access_token,
         httponly=True,
         max_age=max_age_seconds,
-        samesite=settings.COOKIE_SAMESITE,
-        secure=settings.COOKIE_SECURE,
+        samesite=cookie_samesite,
+        secure=cookie_secure,
         path="/",
     )
 
@@ -53,11 +56,14 @@ def login(
 @router.post("/logout")
 def logout(response: Response):
     """Logs out user by invalidating/clearing the HttpOnly authentication cookie."""
+    cookie_secure = True if settings.is_production else settings.COOKIE_SECURE
+    cookie_samesite = "none" if settings.is_production else settings.COOKIE_SAMESITE
+
     response.delete_cookie(
         key=settings.COOKIE_NAME,
         path="/",
-        samesite=settings.COOKIE_SAMESITE,
-        secure=settings.COOKIE_SECURE,
+        samesite=cookie_samesite,
+        secure=cookie_secure,
     )
     return {"message": "Successfully logged out"}
 

@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str = "development"
 
+    @property
+    def is_production(self) -> bool:
+        return self.ENVIRONMENT.lower() == "production"
+
     # Phase 2: Email Configuration
     EMAIL_MODE: str = "console"  # 'console' (simulated/log mode) or 'smtp'
     SMTP_HOST: str = "localhost"
