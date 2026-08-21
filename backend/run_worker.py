@@ -35,6 +35,13 @@ def run_worker_loop(poll_interval: int = 10):
     worker_id = f"worker_{os.getpid()}"
     logger.info(f"Starting standalone email background worker '{worker_id}' (poll interval: {poll_interval}s)")
 
+    # Ensure tables exist and default templates are seeded
+    try:
+        from app.database.init_db import init_db
+        init_db()
+    except Exception as ie:
+        logger.error(f"Worker init_db error: {ie}")
+
     # Perform initial idempotent backfill
     db = SessionLocal()
     try:

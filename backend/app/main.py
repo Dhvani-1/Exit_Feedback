@@ -51,10 +51,16 @@ app.include_router(feedback.router, prefix=settings.API_V1_STR)
 
 @app.on_event("startup")
 def on_startup():
-    """Application startup tasks: run idempotent backfill and optional embedded worker thread."""
+    """Application startup tasks: initialize tables, run idempotent backfill and optional embedded worker thread."""
     import os
     import threading
+    from app.database.init_db import init_db
     from app.database.connection import SessionLocal
+
+    # 1. Ensure all database tables exist and initial templates are seeded
+    init_db()
+
+    # 2. Perform backfill check
     db = SessionLocal()
     try:
         backfill_missing_email_jobs(db)
