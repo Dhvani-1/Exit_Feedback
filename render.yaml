@@ -27,11 +27,10 @@ services:
       - key: ENABLE_EMBEDDED_WORKER
         value: "true"
 
-  # 2. Frontend User Interface (Vite + React Static Site - 100% FREE)
+  # 2. Frontend User Interface (Vite + React Static Site - 100% FREE AUTOMATICALLY)
   - type: web
     name: exit-feedback-frontend
     env: static
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
