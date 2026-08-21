@@ -23,11 +23,11 @@ services:
       - key: SMTP_USERNAME
         value: onlyapp.testing@gmail.com
       - key: SMTP_PASSWORD
-        value: kekwrpmflgwmiufg
+        sync: false
       - key: ENABLE_EMBEDDED_WORKER
         value: "true"
 
-  # 2. Frontend User Interface (Vite + React Static Site - 100% FREE AUTOMATICALLY)
+  # 2. Frontend User Interface (Vite + React Static Site)
   - type: web
     name: exit-feedback-frontend
     env: static
