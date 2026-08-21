@@ -1,8 +1,18 @@
 import axios from 'axios';
 
+const rawApiUrl = import.meta.env.VITE_API_URL;
+let baseURL = '/api';
+if (rawApiUrl) {
+  if (rawApiUrl.startsWith('http://') || rawApiUrl.startsWith('https://')) {
+    baseURL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
+  } else {
+    baseURL = `https://${rawApiUrl}/api`;
+  }
+}
+
 const api = axios.create({
-  baseURL: '/api',
-  withCredentials: true, // Crucial for sending/receiving HttpOnly cookies
+  baseURL: baseURL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
